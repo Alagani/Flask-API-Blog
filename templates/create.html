@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    form {
+        box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+        background-color: white;
+        width: 400px !important;
+        border-radius: 10px;
+        padding: 20px !important;
+        margin: 20px auto !important;
+    }
+
+    form input, form select, form textarea {
+        height: 40px !important;
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    form textarea {
+        height: 100px !important;
+        resize: vertical;
+    }
+
+    form h4 {
+        margin-bottom: 20px !important;
+        text-align: center !important;
+    }
+
+    form p {
+        text-align: center;
+    }
+
+    form small {
+        color: red;
+    }
+
+    button {
+        width: 100%;
+        margin-top: 10px;
+    }
+</style>
+
+<form action="{{ url_for('update_article', slug=blog.slug) if update else url_for('create_article') }}" method="POST" enctype="multipart/form-data">
+    <!-- Add CSRF token for security -->
+    {{ form.csrf_token }}
+    
+    <h4>{{ 'Update' if update else 'Create' }} your content</h4>
+
+    <div class="mb-3">
+        <label for="title">Title</label>
+        {{ form.title(class="form-control", placeholder="Enter title") }}
+        {% if form.title.errors %}
+            <small>{{ form.title.errors[0] }}</small>
+        {% endif %}
+    </div>
+
+    <div class="mb-3">
+        <label for="body">Body</label>
+        {{ form.body(class="form-control", placeholder="Enter body") }}
+        {% if form.body.errors %}
+            <small>{{ form.body.errors[0] }}</small>
+        {% endif %}
+    </div>
+
+    <div class="mb-3">
+        <label for="thumbnail">Thumbnail</label>
+        {{ form.thumbnail(class="form-control") }}
+        {% if form.thumbnail.errors %}
+            <small>{{ form.thumbnail.errors[0] }}</small>
+        {% endif %}
+    </div>
+
+    <div class="mb-3">
+        <label for="category_id">Category</label>
+        {{ form.category_id(class="form-select") }}
+        {% if form.category_id.errors %}
+            <small>{{ form.category_id.errors[0] }}</small>
+        {% endif %}
+    </div>
+    
+    <!-- Changed from href to type="submit" -->
+    <button type="submit" class="btn btn-primary">{{ 'Update' if update else 'Create' }} article</button>
+</form>
+
+{% endblock content %}

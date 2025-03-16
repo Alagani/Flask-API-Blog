@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Page content -->
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Post content -->
+            <article>
+                <!-- Post header -->
+                <header class="mb-4">
+                    <!-- Post title -->
+                    <h1 class="fw-bolder mb-1">{{ blog.title }}</h1>
+                    <!-- Post meta content -->
+                    <div class="text-muted fst-italic mb-2">
+                        Posted on {{ blog.created_at.strftime('%B %d, %Y') }} by {{ blog.author.username }}
+                    </div>
+                    <!-- Post categories -->
+                    <a class="badge bg-secondary text-decoration-none link-light" href="#">
+                        {{ blog.category.titles if blog.category else "Uncategorized" }}
+                    </a>
+                </header>
+                <!-- Preview image -->
+                <figure class="mb-4">
+                    <img class="card-img-top" src="{{ url_for('static', filename=blog.thumbnail) }}" alt="Thumbnail">
+                </figure>
+                <!-- Post content -->
+                <section class="mb-5">
+                    <p class="fs-5 mb-4">{{ blog.body | safe }}</p>
+                </section>
+            </article>
+
+            <!-- Comments section -->
+            <section class="mb-5">
+                <div class="card bg-light">
+                    <div class="card-body">
+                        <!-- Comment form -->
+                        {% if current_user.is_authenticated %}
+                        <form class="mb-4" method="POST" action="{{ url_for('add_comment', blog_id=blog.id) }}">
+                            {{ form.hidden_tag() }}  <!-- CSRF protection -->
+                            <div class="mb-3">
+                                <textarea name="body" class="form-control" placeholder="Write a comment..." required></textarea>
+                            </div>
+                            <button class="btn btn-primary w-100">Drop your comment</button>
+                        </form>
+                        {% else %}
+                        <h4>Login to drop a comment</h4>
+                        {% endif %}
+
+                        <!-- Comments List -->
+                        {% for comment in comments %}
+                        <div class="d-flex mb-4">
+                            <!-- Comment Content -->
+                            <div class="ms-3">
+                                <div class="fw-bold">{{ comment.author.username }}</div>
+                                {{ comment.body }}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Related Articles -->
+            <div class="card mb-4">
+                <div class="card-header display-6">Related Articles</div>
+                <div class="card-body">
+                    {% for related_blog in r_blogs %}
+                    <div class="col-lg-12">
+                        <!-- Blog post -->
+                        <div class="card mb-4">
+                            <a href="{{ url_for('detail', slug=related_blog.slug) }}">
+                                <img class="card-img-top" src="{{ url_for('static', filename=related_blog.thumbnail) }}" alt="Thumbnail">
+                            </a>
+                            <div class="card-body">
+                                <div class="small text-muted">{{ related_blog.created_at.strftime('%B %d, %Y') }}</div>
+                                <h2 class="card-title h4">{{ related_blog.title }}</h2>
+                                <p class="card-text">{{ related_blog.body[:100] }}...</p>
+                                <a class="btn btn-primary" href="{{ url_for('detail', slug=related_blog.slug) }}">Read more →</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
