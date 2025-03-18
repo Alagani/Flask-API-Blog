@@ -3,9 +3,7 @@ from flask_login import LoginManager,login_user, login_required, logout_user, cu
 from slugify import slugify
 from sqlalchemy import or_
 import os
-from flask_login import login_user
 from werkzeug.security import check_password_hash
-from flask_login import current_user
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash
 from forms import *
